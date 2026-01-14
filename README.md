@@ -2,13 +2,14 @@ habitRPG
 There's nothing here yet
 =======
 
-Welcome to your Expo app 👋
-This is an Expo project created with create-expo-app.
+# Expo
 
-How to use:
+Cách sử dụng
+1. Chạy app
+   ```bash
+   npx expo start
+   ```
+2. Quét QR bằng app Expo Go (hoặc nhập địa chỉ)
 
-Start the app
-npx expo start
-Use Expo Go on your phone (Scan QR or insert address written in the terminal when ran)
-Other packages installed:
-expo-checkbox
+## packages installed:
++ expo-checkbox
