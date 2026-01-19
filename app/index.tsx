@@ -3,8 +3,14 @@ import { Checkbox } from "expo-checkbox";
 import { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
+type Todo = {
+  id: number;
+  name: string;
+  completed: boolean;
+}
+
 export default function Index() {
-  const todo = [
+  const todo: Todo[] = [
     {
       id: 1,
       name: "Hello",
@@ -23,6 +29,7 @@ export default function Index() {
   ]
   
   const [todos, setTodos] = useState(todo);
+  const [todoText, setTodoText] = useState("");
   
   // Change the completed status of todo item
   function toggleTodo(id: number) {
@@ -33,25 +40,51 @@ export default function Index() {
     )
   }
 
+  // Add a new todo item
+  function createTodo() {
+      if (!todoText.trim()) return;     
+
+      const newTodo: Todo = {
+        id: Date.now(),
+        name: todoText,
+        completed: false
+      };
+      
+      setTodos(prev => [...prev, newTodo]);
+      setTodoText("");
+  }
+
+  // Delete a todo item
+  function deleteTodo(id: number) {
+    setTodos(prev => prev.filter(todo => todo.id !== id));
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Ionicons name="home" size={36} color="orange"/>
         <Text style={{fontSize: 16}}>Todo List</Text>
       </View>
+
       <FlatList style={styles.FlatList}
         data={todos}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.todoItem}>
-            <Checkbox value={item.completed} onValueChange={() => {toggleTodo(item.id)}} />
-            <Text>{item.name}</Text>
+          <View style={styles.todoListItem}>
+            <View style={[styles.todoItem]}>
+              <Checkbox value={item.completed} onValueChange={() => {toggleTodo(item.id)}} />
+              <Text> {item.name}</Text>
+            </View>
+            <Ionicons name="remove-circle" size={24} color="red" 
+              onPress={() => deleteTodo(item.id)} 
+              style={{marginLeft: 10}}/>
           </View>
         )}
       />
+
       <View style={styles.footer}>
-        <TextInput placeholder="Add a new todo" style={styles.TextInput} />
-        <Ionicons name="add-circle" size={48} color="orange" onClick={() => {}} />
+        <TextInput placeholder="Add a new todo" style={styles.TextInput} value={todoText} onChangeText={setTodoText} />
+        <Ionicons name="add-circle" size={48} color="orange" onPress={() => {createTodo()}} />
       </View>
     </View>
   );
@@ -91,8 +124,14 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 20,
   },
+  todoListItem:
+  {
+    flexDirection: "row", 
+    alignItems: "center",
+  },
   todoItem:
   {
+    flex:1,
     flexDirection: "row", 
     alignItems: "center", 
     marginBottom: 10, 
