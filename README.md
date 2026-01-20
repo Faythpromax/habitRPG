@@ -11,5 +11,9 @@ Cách sử dụng
    ```
 2. Quét QR bằng app Expo Go (hoặc nhập địa chỉ)
 
-## packages installed:
-+ expo-checkbox
+## Install:
+npm install
+npx expo install expo-checkbox
+npx expo install @react-native-async-storage/async-storage
+
+

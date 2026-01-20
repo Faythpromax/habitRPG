@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Checkbox } from "expo-checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+
 
 type Todo = {
   id: number;
@@ -10,26 +12,53 @@ type Todo = {
 }
 
 export default function Index() {
-  const todo: Todo[] = [
-    {
-      id: 1,
-      name: "Hello",
-      completed: false
-    },
-    {
-      id: 2,
-      name: "World",
-      completed: true
-    },
-    {
-      id: 3,
-      name: "!!!!",
-      completed: false
-    }
-  ]
+  const todo: Todo[] = [];
+  //   {
+  //     id: 1,
+  //     name: "Hello",
+  //     completed: false
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "World",
+  //     completed: true
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "!!!!",
+  //     completed: false
+  //   }
+  // ]
   
   const [todos, setTodos] = useState(todo);
   const [todoText, setTodoText] = useState("");
+  
+  const saveTodos = async (todos: Todo[]) => {
+    try{
+    await AsyncStorage.setItem("myTodos", JSON.stringify(todos));
+    } catch (error) {
+      console.error("Error saving todos", error);
+    }
+  }
+
+  const loadTodos = async () => {
+    try {
+      const stored = await AsyncStorage.getItem("myTodos");
+      if (stored !== null) {
+        setTodos(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Error loading todos", error);
+    }
+  }
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
+    useEffect(() => {
+    saveTodos(todos);
+  }, [todos]);
   
   // Change the completed status of todo item
   function toggleTodo(id: number) {
@@ -140,6 +169,7 @@ const styles = StyleSheet.create({
   },
   TextInput:
   {
+    flex: 1,
     backgroundColor: "lightyellow",
     fontSize: 14,
   }
