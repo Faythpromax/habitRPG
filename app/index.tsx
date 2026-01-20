@@ -12,7 +12,7 @@ type Todo = {
 }
 
 export default function Index() {
-  const todo: Todo[] = [];
+  // const todo: Todo[] = [
   //   {
   //     id: 1,
   //     name: "Hello",
@@ -30,10 +30,10 @@ export default function Index() {
   //   }
   // ]
   
-  const [todos, setTodos] = useState(todo);
+  const [todos, setTodos] = useState<Todo[]>([])
   const [todoText, setTodoText] = useState("");
   
-  const saveTodos = async (todos: Todo[]) => {
+  const saveTodos = async (todos: Todo[]) => { //hmm1
     try{
     await AsyncStorage.setItem("myTodos", JSON.stringify(todos));
     } catch (error) {
@@ -41,7 +41,7 @@ export default function Index() {
     }
   }
 
-  const loadTodos = async () => {
+  const loadTodos = async () => { //hmm2
     try {
       const stored = await AsyncStorage.getItem("myTodos");
       if (stored !== null) {
