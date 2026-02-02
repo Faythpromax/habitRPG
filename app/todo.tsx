@@ -10,6 +10,7 @@ type Todo = {
   completed: boolean;
 }
 
+
 export default function Todo() {
   // const todo: Todo[] = [
   //   {
@@ -34,14 +35,14 @@ export default function Todo() {
   const [todoText, setTodoText] = useState("");
   
   // Use AsyncStorage to save and load data locally
-  const saveTodos = async (todos: Todo[]) => { //hmm1
+  const saveTodos = async (todos: Todo[]) => {
     try{
     await AsyncStorage.setItem("myTodos", JSON.stringify(todos));
     } catch (error) {
       console.error("Error saving todos", error);
     }
   }
-  const loadTodos = async () => { //hmm2
+  const loadTodos = async () => {
     try {
       const stored = await AsyncStorage.getItem("myTodos");
       if (stored !== null) {
@@ -63,12 +64,23 @@ export default function Todo() {
   }, [todos]);
   
   // Change the completed status of todo item
+  // Create a local variable that changes the EXP once a todo is in completed state
   function toggleTodo(id: number) {
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id ? { ...todo, completed: !todo.completed }: todo
-      )
-    )
+    // setTodos(prev =>
+    //   prev.map(todo =>
+    //     todo.id === id ? { ...todo, completed: !todo.completed }: todo
+    //   )
+    // )
+    setTodos(prev => {
+      return prev.map(todo => {
+        if (todo.id === id) {
+          return { ...todo, completed: !todo.completed };
+        }
+        return todo;
+      });
+    });
+
+
   }
 
   // Add a new todo item

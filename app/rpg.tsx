@@ -1,4 +1,3 @@
-import { Text } from "react-native";
 
 type Player = {
     EXP: number;
@@ -8,5 +7,12 @@ type Player = {
 }
 
 export default function Rpg() {
-  return <Text>RPG Screen</Text>;
+
+  function savePlayerData(player: Player) {
+    // Save player data to AsyncStorage
+  }
+
+  function updateEXP() {
+    // Load player data from AsyncStorage
+  }
 }
