@@ -42,6 +42,7 @@ export default function Todo() {
       console.error("Error saving todos", error);
     }
   }
+
   const loadTodos = async () => {
     try {
       const stored = await AsyncStorage.getItem("myTodos");
@@ -104,10 +105,10 @@ export default function Todo() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Ionicons name="home" size={36} color="orange"/>
         <Text style={{fontSize: 16}}>Todo List</Text>
-      </View>
+      </View> */}
 
       <FlatList style={styles.FlatList}
         data={todos}
@@ -125,6 +126,7 @@ export default function Todo() {
         )}
       />
 
+    {/* Add new todo */}
       <View style={styles.footer}>
         <TextInput placeholder="Add a new todo" style={styles.TextInput} value={todoText} onChangeText={setTodoText} />
         <Ionicons name="add-circle" size={48} color="orange" onPress={() => {createTodo()}} />
@@ -140,17 +142,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  header:
-  {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    alignItems: "center",
-    fontWeight: "bold",
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 20
-  },
+  // header:
+  // {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   width: "100%",
+  //   alignItems: "center",
+  //   fontWeight: "bold",
+  //   padding: 10,
+  //   marginBottom: 10,
+  //   marginTop: 20
+  // },
   footer:
   {
     flexDirection: "row",
