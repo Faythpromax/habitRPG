@@ -54,12 +54,26 @@ export default function Todo() {
     }
   }
 
+  // Clear the completed status of all todo items
+  const clearTodoCompletion = async () => {
+    try {
+      const stored = todos;
+      if (stored !== null) {
+        const clearedTodos = stored.map(todo => ({ ...todo, completed: false }));
+        setTodos(clearedTodos);
+        await AsyncStorage.setItem("myTodos", JSON.stringify(clearedTodos));
+      }
+    } catch (error) {
+      console.error("Error clearing todo completion", error);
+    }
+  }
+
   // Load todos when the app starts
   useEffect(() => {
     loadTodos();
   }, []);
 
-  // Save todos locally whenever they change
+  // Save todos locally whenever they are changed
     useEffect(() => {
     saveTodos(todos);
   }, [todos]);
@@ -130,6 +144,7 @@ export default function Todo() {
       <View style={styles.footer}>
         <TextInput placeholder="Add a new todo" style={styles.TextInput} value={todoText} onChangeText={setTodoText} />
         <Ionicons name="add-circle" size={48} color="orange" onPress={() => {createTodo()}} />
+        <Ionicons name="refresh" size={48} color="red" onPress={() => {clearTodoCompletion()}} />
       </View>
     </View>
   );

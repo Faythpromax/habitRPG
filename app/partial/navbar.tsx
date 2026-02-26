@@ -6,11 +6,11 @@ export default function Navbar() {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => router.push("/todo")}>
+      <Pressable onPress={() => router.push("./todo")}>
         <Text style={styles.button}>Todo</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push("/rpg")}>
+      <Pressable onPress={() => router.push("./rpg")}>
         <Text style={styles.button}>RPG</Text>
       </Pressable>
     </View>
