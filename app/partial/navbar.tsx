@@ -22,7 +22,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 12,
+    borderTopWidth: 1,
     borderBottomWidth: 1,
+    borderColor: "lightgray",
   },
   button: {
     fontSize: 16,

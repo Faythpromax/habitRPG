@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Checkbox } from "expo-checkbox";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
 type Todo = {
   id: number;
@@ -119,11 +119,16 @@ export default function Todo() {
 
   return (
     <View style={styles.container}>
-      {/* <View style={styles.header}>
-        <Ionicons name="home" size={36} color="orange"/>
-        <Text style={{fontSize: 16}}>Todo List</Text>
-      </View> */}
+      <View style={styles.header}>
+        <View style={{flexDirection: "row", alignItems: "center"}}>
+          <Ionicons name="menu" size={36} color="orange"/>
+          <Text style={{fontSize:18, marginLeft:5}}>Fayth</Text>
+        </View>
 
+        <Text style={{fontSize: 18}}>Habit List</Text>
+      </View>
+
+      {/* Show Todo List */}
       <FlatList style={styles.FlatList}
         data={todos}
         keyExtractor={(item) => item.id.toString()}
@@ -133,9 +138,12 @@ export default function Todo() {
               <Checkbox value={item.completed} onValueChange={() => {toggleTodo(item.id)}} />
               <Text> {item.name}</Text>
             </View>
-            <Ionicons name="remove-circle" size={24} color="red" 
-              onPress={() => deleteTodo(item.id)} 
-              style={{marginLeft: 10}}/>
+            <View style={styles.todoOptions}>
+              <Button onPress={() => {}} title="Edit" />
+              <Ionicons name="remove-circle" size={30} color="red" 
+                onPress={() => deleteTodo(item.id)} 
+                style={{marginLeft: 5}}/>
+            </View>
           </View>
         )}
       />
@@ -143,8 +151,8 @@ export default function Todo() {
     {/* Add new todo */}
       <View style={styles.footer}>
         <TextInput placeholder="Add a new todo" style={styles.TextInput} value={todoText} onChangeText={setTodoText} />
-        <Ionicons name="add-circle" size={48} color="orange" onPress={() => {createTodo()}} />
-        <Ionicons name="refresh" size={48} color="red" onPress={() => {clearTodoCompletion()}} />
+        <Ionicons name="add-circle" size={36} color="orange" onPress={() => {createTodo()}} />
+        <Ionicons name="refresh" size={36} color="red" onPress={() => {clearTodoCompletion()}} />
       </View>
     </View>
   );
@@ -154,20 +162,16 @@ const styles = StyleSheet.create({
   container:
   {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
-  // header:
-  // {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   width: "100%",
-  //   alignItems: "center",
-  //   fontWeight: "bold",
-  //   padding: 10,
-  //   marginBottom: 10,
-  //   marginTop: 20
-  // },
+  header:
+  {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#fff4a9",
+  },
   footer:
   {
     flexDirection: "row",
@@ -175,11 +179,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     padding: 10,
-    marginTop: 10,
-    marginBottom: 20
+    gap: 5,
+    backgroundColor: "#fff4a9",
+    // marginTop: 10,
+    // marginBottom: 20
   },
   FlatList:
   {
+    flex: 1,
     backgroundColor: "lightyellow",
     width: "100%",
     padding: 20,
@@ -191,17 +198,27 @@ const styles = StyleSheet.create({
   },
   todoItem:
   {
-    flex:1,
-    flexDirection: "row", 
+    flex: 1,
     alignItems: "center", 
-    marginBottom: 10, 
     padding: 10, 
-    backgroundColor: "skyblue"
+    backgroundColor: "skyblue",
+    flexDirection: "row",
+  },
+  todoOptions:
+  {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10
   },
   TextInput:
   {
     flex: 1,
-    backgroundColor: "lightyellow",
-    fontSize: 14,
+    padding: 10,
+    // backgroundColor: "lightyellow",
+    borderWidth: 1,
+    borderColor: "gray",
+    borderBottomWidth: 1,
+    borderBottomColor: "gray",
+    fontSize: 16,
   }
 });
