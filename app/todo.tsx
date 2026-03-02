@@ -33,7 +33,12 @@ export default function Todo() {
   // create State (it helps update the UI when data changes)
   const [todos, setTodos] = useState<Todo[]>([])
   const [todoText, setTodoText] = useState("");
-  
+  const [editId, setEditId] = useState<number | null>(null)
+  const [editName, setEditName] = useState("")
+
+  // Just to show time when the app is opened
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   // Use AsyncStorage to save and load data locally
   const saveTodos = async (todos: Todo[]) => {
     try{
@@ -42,17 +47,50 @@ export default function Todo() {
       console.error("Error saving todos", error);
     }
   }
-
   const loadTodos = async () => {
     try {
       const stored = await AsyncStorage.getItem("myTodos");
       if (stored !== null) {
         setTodos(JSON.parse(stored));
       }
+      await checkNewDay();
     } catch (error) {
       console.error("Error loading todos", error);
     }
   }
+
+  // Load todos when the app starts
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
+  // Save todos locally whenever they are changed
+  useEffect(() => {
+    saveTodos(todos);
+  }, [todos]);
+
+  // Check time whenever the app is opened, if it's a new day, clear the completed status of all todo items
+  const checkNewDay = async () => {
+      try {
+        const lastVisit = await AsyncStorage.getItem("lastVisit");
+        const now = new Date();
+        const nowString = now.toISOString().split("T")[0];
+        if (lastVisit) {
+          const lastVisitDate = new Date(lastVisit);
+          const lastVisitString = lastVisitDate.toISOString().split("T")[0];
+          if (nowString !== lastVisitString) {
+            clearTodoCompletion();
+          }
+        }
+        await AsyncStorage.setItem("lastVisit", now.toISOString());
+      } catch (error) {
+        console.error("Error checking new day", error);
+      }
+    }
+
+  // useEffect(() => {
+  //   checkNewDay();
+  // }, [loadTodos]);
 
   // Clear the completed status of all todo items
   const clearTodoCompletion = async () => {
@@ -68,15 +106,7 @@ export default function Todo() {
     }
   }
 
-  // Load todos when the app starts
-  useEffect(() => {
-    loadTodos();
-  }, []);
 
-  // Save todos locally whenever they are changed
-    useEffect(() => {
-    saveTodos(todos);
-  }, [todos]);
   
   // Change the completed status of todo item
   // Create a local variable that changes the EXP once a todo is in completed state
@@ -94,8 +124,6 @@ export default function Todo() {
         return todo;
       });
     });
-
-
   }
 
   // Add a new todo item
@@ -112,6 +140,20 @@ export default function Todo() {
       setTodoText("");
   }
 
+  function editTodo(id: number, name:string) {
+    setEditId(id);
+    setEditName(name);
+  }
+
+  function saveEdit() {
+    if (!editId || editName.trim() === "") return;
+    
+    setTodos(prev => prev.map(todo => 
+      todo.id === editId ? { ...todo, name: editName } : todo));
+    setEditId(null);
+    setEditName("");
+  }
+
   // Delete a todo item
   function deleteTodo(id: number) {
     setTodos(prev => prev.filter(todo => todo.id !== id));
@@ -119,16 +161,19 @@ export default function Todo() {
 
   return (
     <View style={styles.container}>
+
+      {/* Header */}
       <View style={styles.header}>
         <View style={{flexDirection: "row", alignItems: "center"}}>
           <Ionicons name="menu" size={36} color="orange"/>
           <Text style={{fontSize:18, marginLeft:5}}>Fayth</Text>
+          <Text style={{fontSize:14, marginLeft:5}}>{currentTime.toISOString().split("T")[0]}</Text>
         </View>
 
         <Text style={{fontSize: 18}}>Habit List</Text>
       </View>
 
-      {/* Show Todo List */}
+      {/* Todo List */}
       <FlatList style={styles.FlatList}
         data={todos}
         keyExtractor={(item) => item.id.toString()}
@@ -136,10 +181,23 @@ export default function Todo() {
           <View style={styles.todoListItem}>
             <View style={[styles.todoItem]}>
               <Checkbox value={item.completed} onValueChange={() => {toggleTodo(item.id)}} />
-              <Text> {item.name}</Text>
+
+              {/* Show todo item name or TextInput depending on whether you're editing it or not */}
+              {item.id === editId ? (
+                <TextInput placeholder="Edit todo"
+                  style={{borderWidth: 1}} value={editName} onChangeText={setEditName} />
+              ) : (
+                <Text style={{marginLeft: 5}}>{item.name}</Text>
+              )}
             </View>
+
             <View style={styles.todoOptions}>
-              <Button onPress={() => {}} title="Edit" />
+              {/* Same with the button */}
+              {item.id === editId ? (
+                <Button onPress={() => saveEdit()} title="Save" />
+              ) : (
+                <Button onPress={() => editTodo(item.id, item.name)} title="Edit" />
+              )}
               <Ionicons name="remove-circle" size={30} color="red" 
                 onPress={() => deleteTodo(item.id)} 
                 style={{marginLeft: 5}}/>
@@ -195,6 +253,7 @@ const styles = StyleSheet.create({
   {
     flexDirection: "row", 
     alignItems: "center",
+    marginBottom: 10,
   },
   todoItem:
   {
