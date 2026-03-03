@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 type Player = {
@@ -16,13 +16,33 @@ export default function RPG() {
     health: 100,
     mana: 50
   });
-  const [EXP, setEXP] = useState(player.EXP.toString());
+  const [addedEXP, setAddedEXP] = useState(0);
 
-  const playerNewEXP = async (newEXP: string) => {
-    setPlayer((prev) => ({... prev, EXP: Number(newEXP)}));
-    const newPlayer = {...player, EXP: Number(newEXP)};
-    savePlayerData(newPlayer);
-  };
+  useEffect(() => {
+    const loadPlayer= async () => {
+      const loadData = await loadPlayerData();
+      if (loadData != null) {
+        setPlayer(loadData);
+      }
+    }
+    loadPlayer();
+  }, []);
+
+  // For now updateEXP when pressing a button
+  function updateEXP(addEXP: number) {
+    if (addEXP < 0) return;
+
+    setPlayer(prev => {
+      const totalEXP = prev.EXP + addEXP;
+      const newLevel = prev.level + Math.floor(totalEXP / 100); // Level up for every 100 EXP
+      const newEXP = totalEXP % 100; // Remainder EXP after leveling up
+
+      const newPlayer = {...prev, EXP: newEXP, level: newLevel};
+
+      savePlayerData(newPlayer);
+      return newPlayer;
+    });
+  }
 
   return (
     <View style = {style.container}>
@@ -30,8 +50,8 @@ export default function RPG() {
       <Text style={style.stats}>Level: {player.level}</Text>
       <Text style={style.stats}>Health: {player.health}</Text>
       <Text style={style.stats}>Mana: {player.mana}</Text>
-      <TextInput value={EXP} onChangeText={setEXP} style={{color: "red", fontSize: 20}}/>
-      <Ionicons name="add-circle" size={48} color="turquoise" onPress={() => {playerNewEXP(EXP)}} />
+      <TextInput value={addedEXP.toString()} onChangeText={(text) => setAddedEXP(Number(text))} style={{color: "red", fontSize: 20}}/>
+      <Ionicons name="add-circle" size={48} color="turquoise" onPress={() => {updateEXP(Number(addedEXP))}} />
     </View>
   )
 }
@@ -40,7 +60,7 @@ async function loadPlayerData() {
   // Load player data from AsyncStorage
     try {
       const stored = await AsyncStorage.getItem("playerData");
-      if (stored) {
+      if (stored != null) {
         return JSON.parse(stored) as Player;
       }
       return {
@@ -64,9 +84,7 @@ export async function savePlayerData(player: Player) {
     }
   }
 
-export function updateEXP(newEXP: number) {
-  // Update player EXP with todo later
-  }
+
 
 const style = StyleSheet.create({
   container:

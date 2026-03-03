@@ -47,27 +47,15 @@ export default function Todo() {
       console.error("Error saving todos", error);
     }
   }
+
+  // Instead of loading todos directly, we check if it's a new day first
   const loadTodos = async () => {
     try {
-      const stored = await AsyncStorage.getItem("myTodos");
-      if (stored !== null) {
-        setTodos(JSON.parse(stored));
-      }
-      await checkNewDay();
+      checkNewDay();
     } catch (error) {
       console.error("Error loading todos", error);
     }
   }
-
-  // Load todos when the app starts
-  useEffect(() => {
-    loadTodos();
-  }, []);
-
-  // Save todos locally whenever they are changed
-  useEffect(() => {
-    saveTodos(todos);
-  }, [todos]);
 
   // Check time whenever the app is opened, if it's a new day, clear the completed status of all todo items
   const checkNewDay = async () => {
@@ -81,6 +69,12 @@ export default function Todo() {
           if (nowString !== lastVisitString) {
             clearTodoCompletion();
           }
+          else {
+            const stored = await AsyncStorage.getItem("myTodos");
+            if (stored !== null) {
+            setTodos(JSON.parse(stored));
+            }
+          }
         }
         await AsyncStorage.setItem("lastVisit", now.toISOString());
       } catch (error) {
@@ -88,16 +82,13 @@ export default function Todo() {
       }
     }
 
-  // useEffect(() => {
-  //   checkNewDay();
-  // }, [loadTodos]);
-
   // Clear the completed status of all todo items
   const clearTodoCompletion = async () => {
     try {
-      const stored = todos;
-      if (stored !== null) {
-        const clearedTodos = stored.map(todo => ({ ...todo, completed: false }));
+      const stored = await AsyncStorage.getItem("myTodos");
+      const currentList = JSON.parse(stored || "[]") as Todo[];
+      if (currentList !== null) {
+        const clearedTodos = currentList.map(todo => ({ ...todo, completed: false }));
         setTodos(clearedTodos);
         await AsyncStorage.setItem("myTodos", JSON.stringify(clearedTodos));
       }
@@ -106,16 +97,18 @@ export default function Todo() {
     }
   }
 
+    // Load todos when the app starts
+  useEffect(() => {
+    loadTodos();
+  }, []);
 
+  // Save todos locally whenever they are changed
+  useEffect(() => {
+    saveTodos(todos);
+  }, [todos]);
   
   // Change the completed status of todo item
-  // Create a local variable that changes the EXP once a todo is in completed state
   function toggleTodo(id: number) {
-    // setTodos(prev =>
-    //   prev.map(todo =>
-    //     todo.id === id ? { ...todo, completed: !todo.completed }: todo
-    //   )
-    // )
     setTodos(prev => {
       return prev.map(todo => {
         if (todo.id === id) {
