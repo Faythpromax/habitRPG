@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
-type Player = {
+export type Player = {
     EXP: number;
     level: number;
     health: number;
@@ -74,7 +74,7 @@ async function loadPlayerData() {
     }
   }
 
-export async function savePlayerData(player: Player) {
+async function savePlayerData(player: Player) {
   // Save player data to AsyncStorage
     try {
       await AsyncStorage.setItem("playerData", JSON.stringify(player));
@@ -83,8 +83,6 @@ export async function savePlayerData(player: Player) {
       console.error("Error saving player data", error);
     }
   }
-
-
 
 const style = StyleSheet.create({
   container:

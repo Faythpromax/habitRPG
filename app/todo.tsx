@@ -10,31 +10,20 @@ type Todo = {
   completed: boolean;
 }
 
-
 export default function Todo() {
-  // const todo: Todo[] = [
-  //   {
-  //     id: 1,
-  //     name: "Hello",
-  //     completed: false
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "World",
-  //     completed: true
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "!!!!",
-  //     completed: false
-  //   }
-  // ]
-  
+  const [player, setPlayer] = useState<Player>({
+    EXP: 0,
+    level: 1,
+    health: 100,
+    mana: 50
+  });
   // create State (it helps update the UI when data changes)
   const [todos, setTodos] = useState<Todo[]>([])
   const [todoText, setTodoText] = useState("");
   const [editId, setEditId] = useState<number | null>(null)
   const [editName, setEditName] = useState("")
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Just to show time when the app is opened
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -63,6 +52,7 @@ export default function Todo() {
         const lastVisit = await AsyncStorage.getItem("lastVisit");
         const now = new Date();
         const nowString = now.toISOString().split("T")[0];
+        
         if (lastVisit) {
           const lastVisitDate = new Date(lastVisit);
           const lastVisitString = lastVisitDate.toISOString().split("T")[0];
@@ -97,13 +87,18 @@ export default function Todo() {
     }
   }
 
-    // Load todos when the app starts
+  // Load todos when the app starts
   useEffect(() => {
-    loadTodos();
+    const load = async () => {
+      await loadTodos();
+      setIsLoaded(true);
+    };
+    load();
   }, []);
 
   // Save todos locally whenever they are changed
   useEffect(() => {
+    if (!isLoaded) return; // Don't save if we haven't loaded the initial data yet
     saveTodos(todos);
   }, [todos]);
   
