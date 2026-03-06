@@ -10,13 +10,8 @@ type Todo = {
   completed: boolean;
 }
 
-export default function Todo() {
-  const [player, setPlayer] = useState<Player>({
-    EXP: 0,
-    level: 1,
-    health: 100,
-    mana: 50
-  });
+export default function Todo({ updateEXP }: { updateEXP: (addEXP: number) => void }) {
+  
   // create State (it helps update the UI when data changes)
   const [todos, setTodos] = useState<Todo[]>([])
   const [todoText, setTodoText] = useState("");

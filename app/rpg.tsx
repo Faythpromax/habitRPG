@@ -2,20 +2,17 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Player } from "./types/player";
 
-export type Player = {
-    EXP: number;
-    level: number;
-    health: number;
-    mana: number;
-}
-export default function RPG() {
-  const [player, setPlayer] = useState<Player>({
-    EXP: 0, 
-    level: 1, 
-    health: 100,
-    mana: 50
-  });
+// export default function RPG({ updateEXP }: { updateEXP: (addEXP: number) => void }) {
+export default function RPG({updateEXP, player}: {updateEXP: (addEXP: number) => void, player: Player}) {
+  // const [player, setPlayer] = useState<Player>({
+  //   EXP: 0, 
+  //   level: 1, 
+  //   health: 100,
+  //   mana: 50
+  // });
+  
   const [addedEXP, setAddedEXP] = useState(0);
 
   useEffect(() => {
@@ -29,20 +26,20 @@ export default function RPG() {
   }, []);
 
   // For now updateEXP when pressing a button
-  function updateEXP(addEXP: number) {
-    if (addEXP < 0) return;
+  // function updateEXP(addEXP: number) {
+  //   if (addEXP < 0) return;
 
-    setPlayer(prev => {
-      const totalEXP = prev.EXP + addEXP;
-      const newLevel = prev.level + Math.floor(totalEXP / 100); // Level up for every 100 EXP
-      const newEXP = totalEXP % 100; // Remainder EXP after leveling up
+  //   setPlayer(prev => {
+  //     const totalEXP = prev.EXP + addEXP;
+  //     const newLevel = prev.level + Math.floor(totalEXP / 100); // Level up for every 100 EXP
+  //     const newEXP = totalEXP % 100; // Remainder EXP after leveling up
 
-      const newPlayer = {...prev, EXP: newEXP, level: newLevel};
+  //     const newPlayer = {...prev, EXP: newEXP, level: newLevel};
 
-      savePlayerData(newPlayer);
-      return newPlayer;
-    });
-  }
+  //     savePlayerData(newPlayer);
+  //     return newPlayer;
+  //   });
+  // }
 
   return (
     <View style = {style.container}>
