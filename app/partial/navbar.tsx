@@ -10,7 +10,7 @@ export default function Navbar() {
         <Text style={styles.button}>Todo</Text>
       </Pressable>
 
-      <Pressable onPress={() => router.push("./rpg")}>
+      <Pressable onPress={() => router.push("./screens/rpg")}>
         <Text style={styles.button}>RPG</Text>
       </Pressable>
     </View>
