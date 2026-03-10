@@ -1,9 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
-import RPG from '../screens/rpg';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { Player } from '../types/player';
 
-export default function Index() {
+type PlayerContextType = {
+  player: Player;
+  updateEXP: (addEXP: number) => void;
+};
+
+const PlayerContext = createContext<PlayerContextType | null>(null);
+
+export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [player, setPlayer] = useState<Player>({
     EXP: 0,
     level: 1,
@@ -65,10 +71,18 @@ export default function Index() {
     }, []);
   
   return (
-  <>
-      {/* <RPG updateEXP={updateEXP} /> */}
-      {/* <RPG player={player} /> */}
-      <RPG updateEXP={updateEXP} player={player} />
-  </>
+    <PlayerContext.Provider value={{ player, updateEXP }}>
+      {children}
+    </PlayerContext.Provider>
   );
+}
+
+export function usePlayer() {
+  const context = useContext(PlayerContext);
+
+  if (!context) {
+    throw new Error("usePlayer must be used within a PlayerProvider");
+  }
+  
+  return context;
 }

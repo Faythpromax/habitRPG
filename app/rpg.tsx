@@ -1,16 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { Player } from "../types/player";
+import { usePlayer } from "./contexts/playerContext";
 
-type RPGProps = {
-  updateEXP: (addEXP: number) => void
-  player: Player
-}
+// type RPGProps = {
+//   updateEXP: (addEXP: number) => void
+//   player: Player
+// }
 
-// export default function RPG({ updateEXP }: { updateEXP: (addEXP: number) => void }) {
-export default function RPG({ updateEXP, player }: RPGProps) {
+
+// export default function RPG({ updateEXP, player }: RPGProps) {
+export default function RPG() {
   const [addedEXP, setAddedEXP] = useState(0);
+  const { player, updateEXP } = usePlayer();
 
   return (
     <View style = {style.container}>
