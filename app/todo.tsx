@@ -3,15 +3,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Checkbox } from "expo-checkbox";
 import { useEffect, useState } from "react";
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { usePlayer } from "./contexts/playerContext";
+import { Todo } from "./types/todo";
 
-type Todo = {
-  id: number;
-  name: string;
-  completed: boolean;
-}
+// export default function Todo({ updateEXP }: { updateEXP: (addEXP: number) => void }) {
+export default function Habit() {
+  // Get player data and updateEXP function
+  const { player, updateEXP } = usePlayer();
 
-export default function Todo({ updateEXP }: { updateEXP: (addEXP: number) => void }) {
-  
   // create State (it helps update the UI when data changes)
   const [todos, setTodos] = useState<Todo[]>([])
   const [todoText, setTodoText] = useState("");
@@ -20,7 +19,7 @@ export default function Todo({ updateEXP }: { updateEXP: (addEXP: number) => voi
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Just to show time when the app is opened
+  // Just to show date when the app is opened
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Use AsyncStorage to save and load data locally
@@ -102,6 +101,9 @@ export default function Todo({ updateEXP }: { updateEXP: (addEXP: number) => voi
     setTodos(prev => {
       return prev.map(todo => {
         if (todo.id === id) {
+          if (todo.completed === false) {
+            updateEXP(35); // Add 10 EXP for completing a task
+          }
           return { ...todo, completed: !todo.completed };
         }
         return todo;

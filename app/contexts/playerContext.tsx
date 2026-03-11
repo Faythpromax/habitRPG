@@ -51,9 +51,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     setPlayer(prev => {
       const totalEXP = prev.EXP + addEXP;
       const newLevel = prev.level + Math.floor(totalEXP / 100); // Level up for every 100 EXP
+      const newHealth = prev.health + (newLevel - prev.level) * 40; // Increase health by 40 for each level up
+      const newMana = prev.mana + (newLevel - prev.level) * 20; // Increase mana by 20 for each level up
       const newEXP = totalEXP % 100; // Remainder EXP after leveling up
 
-      const newPlayer = {...prev, EXP: newEXP, level: newLevel};
+      const newPlayer = {...prev, EXP: newEXP, level: newLevel, health: newHealth, mana: newMana};
 
       savePlayerData(newPlayer);
       return newPlayer;

@@ -1,6 +1,7 @@
+// useContext testing
 import { createContext, useContext, useState } from "react";
 
-// // Create the context
+// Create the context
 const CounterContext = createContext<any>(null);
 
 // Create a provider component
