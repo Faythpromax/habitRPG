@@ -8,25 +8,34 @@
 // }
 
 import { Button, Text, View } from "react-native";
-import { CounterProvider, useCounter } from "./contexts/counterContext";
+import { useCounter } from "./contexts/counterContext";
+import { useTheme } from "./contexts/themeContext";
 
 // Component that reads context
-function CounterDisplay() {
+export default function ThemeCounterDisplay() {
   const { count, increase } = useCounter();
-
+  const { theme, toggleTheme} = useTheme();
   return (
-    <View>
-      <Text>Count: {count}</Text>
-      <Button title="Add 1" onPress={increase} />
+    <View style={{flex:1, backgroundColor: theme === "dark" ? "black" : "white"}}>
+      <View style={{flex: 1}}>
+        <Text style = {{color: theme === "dark" ? "white" : "black", fontSize: 16}}>Count: {count}</Text>
+        <Button title="Add 1" onPress={increase} />
+      </View>
+
+      <View style={{marginTop: 20}}>
+        <Text style = {{color: theme === "dark" ? "white" : "black", fontSize: 16}}>Try changing theme</Text>
+        <Button title="change theme" onPress={toggleTheme} />
+      </View>
     </View>
   );
 }
 
-// Root component
-export default function App() {
-  return (
-    <CounterProvider>
-      <CounterDisplay />
-    </CounterProvider>
-  );
-}
+// export default function Home() {
+//   return (
+//     <ThemeProvider>
+//       <CounterProvider>
+//         <ThemeCounterDisplay />
+//       </CounterProvider>
+//     </ThemeProvider>
+//   );
+// }

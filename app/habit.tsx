@@ -4,16 +4,16 @@ import { Checkbox } from "expo-checkbox";
 import { useEffect, useState } from "react";
 import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import { usePlayer } from "./contexts/playerContext";
-import { Todo } from "./types/todo";
+import { Habit } from "./types/habit";
 
 // export default function Todo({ updateEXP }: { updateEXP: (addEXP: number) => void }) {
-export default function Habit() {
+export default function HabitTracker() {
   // Get player data and updateEXP function
   const { player, updateEXP } = usePlayer();
 
   // create State (it helps update the UI when data changes)
-  const [todos, setTodos] = useState<Todo[]>([])
-  const [todoText, setTodoText] = useState("");
+  const [habits, setHabits] = useState<Habit[]>([])
+  const [habitText, setHabitText] = useState("");
   const [editId, setEditId] = useState<number | null>(null)
   const [editName, setEditName] = useState("")
 
@@ -23,20 +23,20 @@ export default function Habit() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Use AsyncStorage to save and load data locally
-  const saveTodos = async (todos: Todo[]) => {
+  const saveHabits = async (habits: Habit[]) => {
     try{
-    await AsyncStorage.setItem("myTodos", JSON.stringify(todos));
+    await AsyncStorage.setItem("myHabits", JSON.stringify(habits));
     } catch (error) {
-      console.error("Error saving todos", error);
+      console.error("Error saving habits", error);
     }
   }
 
   // Instead of loading todos directly, we check if it's a new day first
-  const loadTodos = async () => {
+  const loadHabits = async () => {
     try {
       checkNewDay();
     } catch (error) {
-      console.error("Error loading todos", error);
+      console.error("Error loading habits", error);
     }
   }
 
@@ -51,12 +51,12 @@ export default function Habit() {
           const lastVisitDate = new Date(lastVisit);
           const lastVisitString = lastVisitDate.toISOString().split("T")[0];
           if (nowString !== lastVisitString) {
-            clearTodoCompletion();
+            clearHabitCompletion();
           }
           else {
-            const stored = await AsyncStorage.getItem("myTodos");
+            const stored = await AsyncStorage.getItem("myHabits");
             if (stored !== null) {
-            setTodos(JSON.parse(stored));
+            setHabits(JSON.parse(stored));
             }
           }
         }
@@ -67,24 +67,24 @@ export default function Habit() {
     }
 
   // Clear the completed status of all todo items
-  const clearTodoCompletion = async () => {
+  const clearHabitCompletion = async () => {
     try {
-      const stored = await AsyncStorage.getItem("myTodos");
-      const currentList = JSON.parse(stored || "[]") as Todo[];
+      const stored = await AsyncStorage.getItem("myHabits");
+      const currentList = JSON.parse(stored || "[]") as Habit[];
       if (currentList !== null) {
-        const clearedTodos = currentList.map(todo => ({ ...todo, completed: false }));
-        setTodos(clearedTodos);
-        await AsyncStorage.setItem("myTodos", JSON.stringify(clearedTodos));
+        const clearedHabits = currentList.map(habit => ({ ...habit, completed: false }));
+        setHabits(clearedHabits);
+        await AsyncStorage.setItem("myHabits", JSON.stringify(clearedHabits));
       }
     } catch (error) {
-      console.error("Error clearing todo completion", error);
+      console.error("Error clearing habit completion", error);
     }
   }
 
   // Load todos when the app starts
   useEffect(() => {
     const load = async () => {
-      await loadTodos();
+      await loadHabits();
       setIsLoaded(true);
     };
     load();
@@ -93,39 +93,39 @@ export default function Habit() {
   // Save todos locally whenever they are changed
   useEffect(() => {
     if (!isLoaded) return; // Don't save if we haven't loaded the initial data yet
-    saveTodos(todos);
-  }, [todos]);
+    saveHabits(habits);
+  }, [habits]);
   
   // Change the completed status of todo item
-  function toggleTodo(id: number) {
-    setTodos(prev => {
-      return prev.map(todo => {
-        if (todo.id === id) {
-          if (todo.completed === false) {
-            updateEXP(35); // Add 10 EXP for completing a task
+  function toggleHabit(id: number) {
+    setHabits(prev => {
+      return prev.map(habit => {
+        if (habit.id === id) {
+          if (habit.completed === false) {
+            updateEXP(35); // Add 35 EXP for completing a task
           }
-          return { ...todo, completed: !todo.completed };
+          return { ...habit, completed: !habit.completed };
         }
-        return todo;
+        return habit;
       });
     });
   }
 
   // Add a new todo item
-  function createTodo() {
-      if (!todoText.trim()) return;     
+  function createHabit() {
+      if (!habitText.trim()) return;     
 
-      const newTodo: Todo = {
+      const newHabit: Habit = {
         id: Date.now(),
-        name: todoText,
+        name: habitText,
         completed: false
       };
       
-      setTodos(prev => [...prev, newTodo]);
-      setTodoText("");
+      setHabits(prev => [...prev, newHabit]);
+      setHabitText("");
   }
 
-  function editTodo(id: number, name:string) {
+  function editHabit(id: number, name:string) {
     setEditId(id);
     setEditName(name);
   }
@@ -133,15 +133,15 @@ export default function Habit() {
   function saveEdit() {
     if (!editId || editName.trim() === "") return;
     
-    setTodos(prev => prev.map(todo => 
-      todo.id === editId ? { ...todo, name: editName } : todo));
+    setHabits(prev => prev.map(habit => 
+      habit.id === editId ? { ...habit, name: editName } : habit));
     setEditId(null);
     setEditName("");
   }
 
   // Delete a todo item
-  function deleteTodo(id: number) {
-    setTodos(prev => prev.filter(todo => todo.id !== id));
+  function deleteHabit(id: number) {
+    setHabits(prev => prev.filter(habit => habit.id !== id));
   }
 
   return (
@@ -160,31 +160,31 @@ export default function Habit() {
 
       {/* Todo List */}
       <FlatList style={styles.FlatList}
-        data={todos}
+        data={habits}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.todoListItem}>
-            <View style={[styles.todoItem]}>
-              <Checkbox value={item.completed} onValueChange={() => {toggleTodo(item.id)}} />
+          <View style={styles.habitListItem}>
+            <View style={[styles.habitItem]}>
+              <Checkbox value={item.completed} onValueChange={() => {toggleHabit(item.id)}} />
 
               {/* Show todo item name or TextInput depending on whether you're editing it or not */}
               {item.id === editId ? (
-                <TextInput placeholder="Edit todo"
-                  style={{borderWidth: 1}} value={editName} onChangeText={setEditName} />
+                <TextInput placeholder="Edit habit"
+                  style={{borderWidth: 1, padding: 0, marginLeft: 5, flex: 1}} value={editName} onChangeText={setEditName} />
               ) : (
-                <Text style={{marginLeft: 5}}>{item.name}</Text>
+                <Text style={{marginLeft: 5, flex: 1}}>{item.name}</Text>
               )}
             </View>
 
-            <View style={styles.todoOptions}>
+            <View style={styles.habitOptions}>
               {/* Same with the button */}
               {item.id === editId ? (
                 <Button onPress={() => saveEdit()} title="Save" />
               ) : (
-                <Button onPress={() => editTodo(item.id, item.name)} title="Edit" />
+                <Button onPress={() => editHabit(item.id, item.name)} title="Edit" />
               )}
               <Ionicons name="remove-circle" size={30} color="red" 
-                onPress={() => deleteTodo(item.id)} 
+                onPress={() => deleteHabit(item.id)} 
                 style={{marginLeft: 5}}/>
             </View>
           </View>
@@ -193,9 +193,9 @@ export default function Habit() {
 
     {/* Add new todo */}
       <View style={styles.footer}>
-        <TextInput placeholder="Add a new todo" style={styles.TextInput} value={todoText} onChangeText={setTodoText} />
-        <Ionicons name="add-circle" size={36} color="orange" onPress={() => {createTodo()}} />
-        <Ionicons name="refresh" size={36} color="red" onPress={() => {clearTodoCompletion()}} />
+        <TextInput placeholder="Add a new habit" style={styles.TextInput} value={habitText} onChangeText={setHabitText} />
+        <Ionicons name="add-circle" size={36} color="orange" onPress={() => {createHabit()}} />
+        <Ionicons name="refresh" size={36} color="red" onPress={() => {clearHabitCompletion()}} />
       </View>
     </View>
   );
@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 20,
   },
-  todoListItem:
+  habitListItem:
   {
     flexDirection: "row", 
     alignItems: "center",
     marginBottom: 10,
   },
-  todoItem:
+  habitItem:
   {
     flex: 1,
     alignItems: "center", 
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     backgroundColor: "skyblue",
     flexDirection: "row",
   },
-  todoOptions:
+  habitOptions:
   {
     flexDirection: "row",
     alignItems: "center",

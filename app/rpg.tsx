@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { usePlayer } from "./contexts/playerContext";
 
@@ -10,9 +9,10 @@ import { usePlayer } from "./contexts/playerContext";
 
 // export default function RPG({ updateEXP, player }: RPGProps) {
 export default function RPG() {
-  const [addedEXP, setAddedEXP] = useState(0);
+  // const [addedEXP, setAddedEXP] = useState(0);
   const { player, updateEXP } = usePlayer();
 
+  // Display RPG stats
   return (
     <View style = {style.container}>
       <Text style={style.stats}>EXP: {player.EXP}</Text>
