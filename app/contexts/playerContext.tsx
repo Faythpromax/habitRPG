@@ -13,6 +13,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [player, setPlayer] = useState<Player>({
     EXP: 0,
     level: 1,
+    capEXP: 100,
     health: 100,
     mana: 50
   });
@@ -37,6 +38,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       return {
         EXP: 0,
         level: 1,
+        capEXP: 100,
         health: 100,
         mana: 50,
       };
@@ -49,14 +51,21 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     if (addEXP < 0) return;
 
     setPlayer(prev => {
-      const totalEXP = prev.EXP + addEXP;
-      const newLevel = prev.level + Math.floor(totalEXP / 100); // Level up for every 100 EXP
-      const newHealth = prev.health + (newLevel - prev.level) * 40; // Increase health by 40 for each level up
-      const newMana = prev.mana + (newLevel - prev.level) * 20; // Increase mana by 20 for each level up
-      const newEXP = totalEXP % 100; // Remainder EXP after leveling up
+      let totalEXP = prev.EXP + addEXP;
+      let level = prev.level;
+      let capEXP = prev.capEXP;
+      let health = prev.health;
+      let mana = prev.mana;
 
-      const newPlayer = {...prev, EXP: newEXP, level: newLevel, health: newHealth, mana: newMana};
+      while (totalEXP >= capEXP) {
+        totalEXP -= capEXP;
+        level = level + 1;
+        capEXP = Math.floor(capEXP * 1.1); // Increase capEXP by 10% for each level up
+        health = Math.floor(health * 1.15); // Increase health by 15% for each level up
+        mana = Math.floor(mana * 1.15); // Increase mana by 15% for each level up
+      }
 
+      const newPlayer = {...prev, EXP: totalEXP, level: level, capEXP: capEXP, health: health, mana: mana};
       savePlayerData(newPlayer);
       return newPlayer;
     });

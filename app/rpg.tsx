@@ -6,7 +6,6 @@ import { usePlayer } from "./contexts/playerContext";
 //   player: Player
 // }
 
-
 // export default function RPG({ updateEXP, player }: RPGProps) {
 export default function RPG() {
   // const [addedEXP, setAddedEXP] = useState(0);
@@ -15,7 +14,7 @@ export default function RPG() {
   // Display RPG stats
   return (
     <View style = {style.container}>
-      <Text style={style.stats}>EXP: {player.EXP}</Text>
+      <Text style={style.stats}>EXP: {player.EXP} / {player.capEXP}</Text>
       <Text style={style.stats}>Level: {player.level}</Text>
       <Text style={style.stats}>Health: {player.health}</Text>
       <Text style={style.stats}>Mana: {player.mana}</Text>
