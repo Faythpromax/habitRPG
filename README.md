@@ -17,9 +17,7 @@ Các tính năng:
 - Hoàn thành 1 habit -> tự động thêm EXP vào player
 - Đủ EXP thì lên level, tự động tăng chỉ số, giới hạn EXP tăng theo level
 
-## Install packages:
+# Install packages:
 npm install
 npx expo install expo-checkbox
 npx expo install @react-native-async-storage/async-storage
-
-
