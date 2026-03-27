@@ -18,6 +18,6 @@ Các tính năng:
 - Đủ EXP thì lên level, tự động tăng chỉ số, giới hạn EXP tăng theo level
 
 # Install packages:
-npm install
-npx expo install expo-checkbox
-npx expo install @react-native-async-storage/async-storage
+- npm install
+- npx expo install expo-checkbox
+- npx expo install @react-native-async-storage/async-storage
